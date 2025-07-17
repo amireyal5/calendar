@@ -1,0 +1,6 @@
+{
+  "name": "Guest Management System - Karmiel",
+  "description": "A shared calendar application for Karmiel Social Services with role-based permissions, including admin, security, and employee roles.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
