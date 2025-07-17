@@ -7,21 +7,32 @@ import 'firebase/compat/firestore';
 
 
 // --- FIREBASE INITIALIZATION ---
+const firebaseConfig = {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+};
+
 let auth, db;
 try {
-  const firebaseConfigStr = import.meta.env.VITE_FIREBASE_CONFIG || '{}';
-  if (firebaseConfigStr === '{}') {
-      console.warn("VITE_FIREBASE_CONFIG environment variable is not set. App will not connect to Firebase.");
+  // Check if the essential config keys are provided
+  if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      auth = firebase.auth();
+      db = firebase.firestore();
+  } else {
+      console.error("Firebase configuration is missing or incomplete. Please set the required VITE_FIREBASE_* environment variables in your deployment settings.");
   }
-  const firebaseConfig = JSON.parse(firebaseConfigStr);
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  auth = firebase.auth();
-  db = firebase.firestore();
 } catch (error) {
   console.error("Error initializing Firebase:", error);
 }
+
 
 // --- HELPER FUNCTIONS ---
 const getDaysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
